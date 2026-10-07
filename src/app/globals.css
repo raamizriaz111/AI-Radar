@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Senior-grade Obsidian Intelligence Theme */
+    --background: 228 20% 5%;       /* #090B0F - Ultra-deep Obsidian */
+    --foreground: 210 25% 98%;       /* #F8FAFC - Crisp Pure Text */
+
+    --card: 226 18% 8.5%;           /* #0E1118 - Elevated Surface */
+    --card-foreground: 210 20% 96%;
+
+    --popover: 226 22% 8%;
+    --popover-foreground: 210 20% 98%;
+
+    --primary: 217 91% 60%;          /* #3B82F6 - Electric Indigo Blue */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 225 15% 13%;        /* #1A1E29 */
+    --secondary-foreground: 210 20% 88%;
+
+    --muted: 225 15% 12%;
+    --muted-foreground: 215 15% 58%; /* #828EA0 - Legible Muted */
+
+    --accent: 225 18% 15%;
+    --accent-foreground: 210 25% 98%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 20% 98%;
+
+    --border: 224 15% 14%;           /* #1C2230 - Delicate refined border */
+    --input: 224 15% 14%;
+    --ring: 217 91% 60%;
+
+    --radius: 0.65rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary-foreground;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    background-image: 
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.07), transparent),
+      radial-gradient(ellipse 60% 40% at 100% 10%, rgba(99, 102, 241, 0.04), transparent);
+    background-attachment: fixed;
+  }
+
+  /* Senior developer custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.22);
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+}
+
+/* Glassmorphism & Micro-animations */
+.glass-panel {
+  background: rgba(14, 17, 24, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.glass-panel-elevated {
+  background: rgba(19, 23, 34, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #FFFFFF 0%, #CBD5E1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-primary {
+  background: linear-gradient(135deg, #60A5FA 0%, #A78BFA 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes pulse-dot {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.85);
+  }
+}
+
+.animate-pulse-dot {
+  animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
