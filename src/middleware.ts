@@ -16,6 +16,7 @@ import { parseSessionToken, SESSION_COOKIE_NAME } from '@/lib/auth/sessionCookie
 const PUBLIC_PAGES = new Set([
   '/login',
   '/signup',
+  '/pricing',
   '/terms',
   '/privacy',
   '/welcome',
