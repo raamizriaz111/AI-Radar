@@ -33,14 +33,14 @@ export default function PricingPage() {
 
         <PricingTableClient plans={plans} />
 
-        {/* Interactive Sandbox Simulation Card */}
+        {/* Plan Limits & Features Card */}
         <div className="mb-8 rounded-xl border border-white/[0.08] bg-card/60 p-4 text-center">
           <p className="text-xs text-muted-foreground">
             Evaluating plans for your workflow?{' '}
             <Link href="/account/billing" className="text-primary font-semibold hover:underline">
-              Open the Interactive Tier Sandbox →
+              Review Full Plan Limits &amp; Features →
             </Link>{' '}
-            Simulate Free, Pro, and Advanced in real time across alert triggers, daily digests, and API quotas.
+            Compare Free, Pro, and Advanced across real-time alert triggers, daily digests, and API quotas.
           </p>
         </div>
 

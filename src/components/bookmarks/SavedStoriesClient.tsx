@@ -120,7 +120,7 @@ export function SavedStoriesClient({
   initialSavedEntities,
   isAuthenticated,
 }: SavedStoriesClientProps) {
-  const { isFree, isPro, isAdvanced, displayName, switchPlan } = useCurrentPlan();
+  const { isFree, isPro, isAdvanced, displayName } = useCurrentPlan();
   const [items, setItems] = useState<IntelligenceItemWithSummary[]>(initialBookmarkedItems);
   const [entities, setEntities] = useState<any[]>(initialSavedEntities);
   const [searchQuery, setSearchQuery] = useState('');
@@ -128,7 +128,6 @@ export function SavedStoriesClient({
   const [showExportModal, setShowExportModal] = useState(false);
   const [exportFormat, setExportFormat] = useState<'markdown' | 'bibtex' | 'json'>('markdown');
   const [copiedExport, setCopiedExport] = useState(false);
-  const [switchingToTier, setSwitchingToTier] = useState<string | null>(null);
   const [lastRemovedItem, setLastRemovedItem] = useState<IntelligenceItemWithSummary | null>(null);
 
   // Hydrate & merge local storage saved stories on mount
@@ -215,12 +214,6 @@ export function SavedStoriesClient({
     } else {
       triggerDownload(formattedExportContent, `${filename}.json`, 'application/json');
     }
-  };
-
-  const handleSandboxUpgrade = async (tier: 'pro' | 'advanced') => {
-    setSwitchingToTier(tier);
-    await switchPlan(tier);
-    setSwitchingToTier(null);
   };
 
   // Filter items
@@ -552,32 +545,30 @@ export function SavedStoriesClient({
                   </div>
                 </div>
 
-                {/* Instant Sandbox Switch */}
-                <div className="rounded-xl border border-purple-500/30 bg-purple-500/10 p-4">
+                {/* Upgrade Options */}
+                <div className="rounded-xl border border-primary/25 bg-primary/[0.04] p-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
-                      <h4 className="text-xs font-bold text-purple-200">
-                        Interactive Testing Sandbox
+                      <h4 className="text-xs font-bold text-foreground">
+                        Upgrade to Export Portfolios
                       </h4>
-                      <p className="text-[11px] text-purple-300/80 mt-0.5">
-                        Test this feature right now with 1 click without paying:
+                      <p className="text-[11px] text-muted-foreground mt-0.5">
+                        Structured BibTeX, Markdown and JSON exports are available on Pro and Advanced tiers.
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleSandboxUpgrade('pro')}
-                        disabled={switchingToTier !== null}
-                        className="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-blue-500 transition-colors shadow-sm disabled:opacity-50"
+                      <Link
+                        href="/account/billing?select=pro"
+                        className="rounded-lg bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm"
                       >
-                        {switchingToTier === 'pro' ? 'Switching…' : 'Test as Pro ($10/mo)'}
-                      </button>
-                      <button
-                        onClick={() => handleSandboxUpgrade('advanced')}
-                        disabled={switchingToTier !== null}
-                        className="rounded-lg bg-purple-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-purple-500 transition-colors shadow-sm disabled:opacity-50"
+                        Upgrade to Pro ($10/mo)
+                      </Link>
+                      <Link
+                        href="/account/billing?select=advanced"
+                        className="rounded-lg border border-purple-500/40 bg-purple-500/10 px-3 py-1.5 text-xs font-semibold text-purple-300 hover:bg-purple-500/20 transition-colors shadow-sm"
                       >
-                        {switchingToTier === 'advanced' ? 'Switching…' : 'Test as Advanced ($20/mo)'}
-                      </button>
+                        Upgrade to Advanced ($20/mo)
+                      </Link>
                     </div>
                   </div>
                 </div>

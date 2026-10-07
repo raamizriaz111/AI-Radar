@@ -33,11 +33,10 @@ interface CardBlueprintDrawerProps {
 }
 
 export function CardBlueprintDrawer({ item, isOpen, onClose }: CardBlueprintDrawerProps) {
-  const { isFree, isPro, isAdvanced, switchPlan } = useCurrentPlan();
+  const { isFree, isPro, isAdvanced } = useCurrentPlan();
   const [activeTab, setActiveTab] = useState<'code' | 'json'>('code');
   const [copiedCode, setCopiedCode] = useState(false);
   const [copiedJson, setCopiedJson] = useState(false);
-  const [switching, setSwitching] = useState(false);
 
   if (!isOpen) return null;
 
@@ -57,12 +56,6 @@ export function CardBlueprintDrawer({ item, isOpen, onClose }: CardBlueprintDraw
       setCopiedJson(true);
       setTimeout(() => setCopiedJson(false), 2000);
     } catch {}
-  };
-
-  const handleQuickUnlock = async () => {
-    setSwitching(true);
-    await switchPlan('advanced');
-    setSwitching(false);
   };
 
   return (
@@ -153,16 +146,14 @@ export function CardBlueprintDrawer({ item, isOpen, onClose }: CardBlueprintDraw
                 className="inline-flex min-h-[34px] items-center gap-1.5 rounded-lg bg-primary px-3.5 py-1.5 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm"
               >
                 <Sparkles size={12} />
-                <span>Unlock on Pro ($10/mo)</span>
+                <span>Unlock with Pro ($10/mo)</span>
               </Link>
-              <button
-                type="button"
-                onClick={handleQuickUnlock}
-                disabled={switching}
+              <Link
+                href="/account/billing?select=advanced"
                 className="inline-flex min-h-[34px] items-center gap-1.5 rounded-lg border border-purple-500/40 bg-purple-500/10 px-3.5 py-1.5 text-xs font-semibold text-purple-300 hover:bg-purple-500/20 transition-colors"
               >
-                {switching ? 'Unlocking…' : '1-Click Sandbox Test (Advanced)'}
-              </button>
+                <span>Upgrade to Advanced ($20/mo)</span>
+              </Link>
             </div>
           </div>
         </div>

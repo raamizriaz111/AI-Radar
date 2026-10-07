@@ -250,7 +250,24 @@ export function IntelligenceStreamView({
                   <Filter size={12} />
                   <span>Show All Categories</span>
                 </button>
-              ) : undefined
+              ) : (
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  <Link
+                    href="/"
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+                  >
+                    <Radar size={13} />
+                    <span>Browse Live Intelligence</span>
+                  </Link>
+                  <Link
+                    href="/briefing"
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.1] bg-secondary/60 px-3.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <span>Read Today&apos;s Briefing</span>
+                    <ArrowRight size={12} />
+                  </Link>
+                </div>
+              )
             }
           />
         </div>

@@ -433,10 +433,10 @@ export default function BillingPage() {
   return (
     <>
       <TopHeader
-        title={canUseTestMode ? "Billing & Plan Testing Sandbox" : "Billing & Subscription Plans"}
+        title={canUseTestMode ? "Billing & Subscription Console" : "Billing & Subscription Plans"}
         description={
           canUseTestMode
-            ? "Developer & Admin Test Mode: Instant tier testing active. Switch freely to preview live capability differences."
+            ? "Admin Console: Manage tier subscriptions, quotas, automated alerts, and billing history."
             : "Manage your subscription, quotas, automated alerts, and billing history."
         }
       />
@@ -564,7 +564,7 @@ export default function BillingPage() {
                     {canUseTestMode ? (
                       <>
                         <Sparkles size={16} className="text-primary animate-pulse-dot" />
-                        <h2 className="text-base font-bold text-foreground">Interactive Tier Sandbox</h2>
+                        <h2 className="text-base font-bold text-foreground">Tier Privilege Console</h2>
                         <span className="rounded-full bg-primary/10 border border-primary/20 px-2.5 py-0.5 text-[10px] font-mono font-bold text-primary uppercase">
                           {isAdmin ? 'Admin Test Mode' : 'Dev Test Mode'}
                         </span>

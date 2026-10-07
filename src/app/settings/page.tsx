@@ -1,11 +1,9 @@
 import type { Metadata } from 'next';
-import { Database, ShieldCheck, Key, ExternalLink, CreditCard, ArrowRight } from 'lucide-react';
+import { ShieldCheck, CreditCard, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { TopHeader } from '@/components/layout/TopHeader';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { SectionHeader } from '@/components/intelligence/SectionHeader';
-import { StatusIndicator } from '@/components/intelligence/StatusIndicator';
-import { isDatabaseConfigured, isServiceKeyConfigured } from '@/lib/supabase/config';
 import { TopicPreferencesEditor } from '@/components/intelligence/TopicPreferencesEditor';
 import { ProfileEditor } from '@/components/personalization/ProfileEditor';
 import { AccountSettingsManager } from '@/components/personalization/AccountSettingsManager';
@@ -17,14 +15,11 @@ export const metadata: Metadata = {
 };
 
 export default function SettingsPage() {
-  const dbConfigured = isDatabaseConfigured();
-  const serviceKeyConfigured = isServiceKeyConfigured();
-
   return (
     <>
       <TopHeader
         title="Settings"
-        description="Manage your personal profile, topic preferences, and database connection."
+        description="Manage your personal profile, topic preferences, and automated dispatches."
       />
       <PageContainer>
         {/* Subscription & Billing */}
@@ -51,11 +46,11 @@ export default function SettingsPage() {
                 href="/pricing"
                 className="text-xs text-primary hover:underline flex items-center gap-1"
               >
-                View pricing <ExternalLink size={10} />
+                View pricing <ArrowRight size={10} />
               </Link>
             </div>
             <p className="text-xs text-muted-foreground">
-              Free, Pro (\$10/mo), and Advanced (\$20/mo) individual plans available. All plans include the full AI intelligence pipeline.
+              Free, Pro ($10/mo), and Advanced ($20/mo) individual plans available. All plans include the full AI intelligence pipeline.
               Upgrade or manage your subscription at any time.
             </p>
             <div className="flex flex-wrap gap-2">
@@ -71,47 +66,6 @@ export default function SettingsPage() {
               >
                 Billing & Usage
               </Link>
-            </div>
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <SectionHeader
-            title="Database Connection & Storage"
-            description="AI Radar uses Supabase PostgreSQL for persistent intelligence items, bookmarks, and diagnostics."
-          />
-
-          <div className="rounded-lg border border-border bg-card p-4 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-border">
-              <div className="flex items-center gap-2">
-                <Database size={16} className="text-primary" />
-                <span className="text-xs font-medium text-foreground">Supabase Project</span>
-              </div>
-              <StatusIndicator
-                status={dbConfigured ? 'success' : 'offline'}
-                label={dbConfigured ? 'Configured' : 'Not configured'}
-              />
-            </div>
-
-            <div className="flex items-center justify-between pb-3 border-b border-border">
-              <div className="flex items-center gap-2">
-                <Key size={16} className="text-primary" />
-                <span className="text-xs font-medium text-foreground">Service Role Key</span>
-              </div>
-              <StatusIndicator
-                status={serviceKeyConfigured ? 'success' : 'warning'}
-                label={serviceKeyConfigured ? 'Configured (Server-only)' : 'Missing in .env.local'}
-              />
-            </div>
-
-            <div className="text-xs text-muted-foreground space-y-2 pt-1">
-              <p className="font-medium text-foreground">How to connect your Supabase database:</p>
-              <ol className="list-decimal pl-4 space-y-1">
-                <li>Create a free project at <a href="https://supabase.com" target="_blank" rel="noopener noreferrer" className="text-primary underline inline-flex items-center gap-0.5">supabase.com <ExternalLink size={10} /></a></li>
-                <li>Go to <strong>Project Settings → API</strong></li>
-                <li>Copy <strong>Project URL</strong>, <strong>anon key</strong>, and <strong>service_role key</strong> into <code>.env.local</code></li>
-                <li>Run migrations from <code>supabase/migrations/</code> in the Supabase SQL Editor</li>
-              </ol>
             </div>
           </div>
         </div>
@@ -133,7 +87,7 @@ export default function SettingsPage() {
                 href="/account/billing#email-alerts"
                 className="flex items-center gap-1 text-xs text-primary hover:underline"
               >
-                Manage in Billing Sandbox <ArrowRight size={12} />
+                Manage in Billing & Alerts <ArrowRight size={12} />
               </Link>
             }
           />

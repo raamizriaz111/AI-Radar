@@ -212,11 +212,11 @@ describe('HeroWelcomeBanner', () => {
     expect(screen.getByText(/Read Today's 5-Min Executive Briefing/i)).toBeInTheDocument();
   });
 
-  it('can be dismissed', () => {
-    render(<HeroWelcomeBanner isAuthenticated={false} />);
-    const dismissBtn = screen.getByTitle('Dismiss introduction');
-    fireEvent.click(dismissBtn);
-    expect(screen.queryByText(/Cut through the noise/i)).not.toBeInTheDocument();
+  it('renders permanent executive command surface without dismiss buttons', () => {
+    render(<HeroWelcomeBanner isAuthenticated={true} />);
+    expect(screen.getByText(/Surveillance Active/i)).toBeInTheDocument();
+    expect(screen.getByText(/Explore Emerging Trends/i)).toBeInTheDocument();
+    expect(screen.queryByTitle('Dismiss introduction')).not.toBeInTheDocument();
   });
 });
 

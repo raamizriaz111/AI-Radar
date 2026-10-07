@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 import { Activity, Database, Server, Layers, Bookmark, Cpu, Rss, GitFork, CreditCard } from 'lucide-react';
 import { format } from 'date-fns';
 import { TopHeader } from '@/components/layout/TopHeader';
@@ -34,6 +35,10 @@ export const dynamic = 'force-dynamic';
 export default async function DiagnosticsPage() {
   const user = await getCurrentUser();
   const isAdmin = user?.role === 'admin';
+
+  if (!isAdmin) {
+    redirect('/');
+  }
 
   const [report, sources, recentRuns, profile, careerSignals, projectOpportunities] = await Promise.all([
     getDiagnosticsReport(),

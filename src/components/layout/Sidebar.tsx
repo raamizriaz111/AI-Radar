@@ -61,7 +61,7 @@ const navItems: NavItem[] = [
   },
   { label: 'New AI Tools', href: '/tools', icon: <Wrench size={15} />, group: 'Desks' },
   { label: 'New AI Systems', href: '/research', icon: <FlaskConical size={15} />, group: 'Desks' },
-  { label: 'AI That Writes Code', href: '/coding-agents', icon: <Bot size={15} />, group: 'Desks' },
+  { label: 'AI Code Agents', href: '/coding-agents', icon: <Bot size={15} />, group: 'Desks' },
   { label: 'Safety & Regulation', href: '/safety', icon: <Shield size={15} />, group: 'Desks' },
 
   // Workspace

@@ -67,7 +67,7 @@ export const vllmConfig = {
 
 export function BriefingView({ currentBriefing, history }: BriefingViewProps) {
   const router = useRouter();
-  const { isFree, isPro, isAdvanced, switchPlan } = useCurrentPlan();
+  const { isFree, isPro, isAdvanced } = useCurrentPlan();
   const [briefing, setBriefing] = useState<DailyBriefingRow | null>(currentBriefing);
   const [isGenerating, setIsGenerating] = useState(false);
   const [message, setMessage] = useState<{ text: string; type: 'info' | 'error' } | null>(null);
@@ -75,7 +75,6 @@ export function BriefingView({ currentBriefing, history }: BriefingViewProps) {
   const [sentWebhook, setSentWebhook] = useState(false);
   const [copiedBriefing, setCopiedBriefing] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
-  const [switching, setSwitching] = useState(false);
 
   const handleGenerate = async (force = true) => {
     setIsGenerating(true);
@@ -375,18 +374,12 @@ export function BriefingView({ currentBriefing, history }: BriefingViewProps) {
                           <Sparkles size={13} />
                           <span>Unlock with Pro ($10/mo)</span>
                         </Link>
-                        <button
-                          type="button"
-                          onClick={async () => {
-                            setSwitching(true);
-                            await switchPlan('advanced');
-                            setSwitching(false);
-                          }}
-                          disabled={switching}
+                        <Link
+                          href="/account/billing?select=advanced"
                           className="inline-flex min-h-[38px] items-center gap-1.5 rounded-lg border border-purple-500/40 bg-purple-500/10 px-4 py-2 text-xs font-semibold text-purple-300 hover:bg-purple-500/20 transition-colors"
                         >
-                          <span>{switching ? 'Switching…' : '1-Click Sandbox Test (Advanced)'}</span>
-                        </button>
+                          <span>Upgrade to Advanced ($20/mo)</span>
+                        </Link>
                       </div>
                     </div>
                   </div>
@@ -562,16 +555,12 @@ export function BriefingView({ currentBriefing, history }: BriefingViewProps) {
                 <Sparkles size={13} />
                 <span>Upgrade to Pro ($10/mo)</span>
               </Link>
-              <button
-                type="button"
-                onClick={async () => {
-                  await switchPlan('advanced');
-                  setShowExportModal(false);
-                }}
+              <Link
+                href="/account/billing?select=advanced"
                 className="w-full sm:w-auto inline-flex min-h-[38px] items-center justify-center rounded-lg border border-purple-500/40 bg-purple-500/10 px-4 py-2 text-xs font-semibold text-purple-300 hover:bg-purple-500/20 transition-colors"
               >
-                <span>Test in Sandbox</span>
-              </button>
+                <span>Upgrade to Advanced ($20/mo)</span>
+              </Link>
             </div>
           </div>
         </div>
