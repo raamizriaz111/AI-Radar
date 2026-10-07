@@ -200,17 +200,30 @@ export async function getItems(filterInput: Partial<ItemsQueryFilter> = {}): Pro
     const supabase = await createClient();
     const offset = (filter.page - 1) * filter.pageSize;
 
-    // Build query with category join filter if categorySlug is provided
-    let query = supabase
-      .from('items')
-      .select(`
+    // Build query with category inner join filter if categorySlug is provided
+    const selectQuery = filter.categorySlug
+      ? `
+        *,
+        source:sources (*),
+        item_categories!inner (
+          category:categories!inner (*)
+        ),
+        summaries (*)
+      `
+      : `
         *,
         source:sources (*),
         item_categories (
           category:categories (*)
         ),
         summaries (*)
-      `, { count: 'exact' });
+      `;
+
+    let query = supabase.from('items').select(selectQuery, { count: 'exact' });
+
+    if (filter.categorySlug) {
+      query = query.eq('item_categories.category.slug', filter.categorySlug);
+    }
 
     if (filter.itemType) {
       query = query.eq('item_type', filter.itemType);
@@ -242,11 +255,31 @@ export async function getItems(filterInput: Partial<ItemsQueryFilter> = {}): Pro
       };
     }
 
+    // If categorySlug was filtered via !inner join, hydrate all other category tags for returned items
+    const fullCategoriesByItem: Record<string, any[]> = {};
+    if (filter.categorySlug && data && data.length > 0) {
+      const itemIds = data.map((row: any) => row.id);
+      const { data: allCats } = await supabase
+        .from('item_categories')
+        .select('item_id, category:categories(*)')
+        .in('item_id', itemIds);
+
+      if (allCats) {
+        for (const ac of allCats) {
+          if (!fullCategoriesByItem[ac.item_id]) fullCategoriesByItem[ac.item_id] = [];
+          if (ac.category) fullCategoriesByItem[ac.item_id].push(ac.category);
+        }
+      }
+    }
+
     // Map and transform data into ItemFull shape
     const items: ItemFull[] = (data || []).map((row: any) => {
-      const categories = (row.item_categories || [])
-        .map((ic: any) => ic.category)
-        .filter(Boolean);
+      const categories = (
+        filter.categorySlug && fullCategoriesByItem[row.id]
+          ? fullCategoriesByItem[row.id]
+          : (row.item_categories || [])
+              .map((ic: any) => ic.category)
+      ).filter(Boolean);
 
       const summary = row.summaries && row.summaries.length > 0 ? row.summaries[0] : null;
 
@@ -274,19 +307,14 @@ export async function getItems(filterInput: Partial<ItemsQueryFilter> = {}): Pro
       };
     });
 
-    // If filtered by categorySlug, filter locally if the relational filter was nested
-    const finalItems = filter.categorySlug
-      ? items.filter((it) => it.categories.some((c) => c.slug === filter.categorySlug))
-      : items;
-
-    const totalCount = count ?? finalItems.length;
+    const totalCount = count ?? items.length;
 
     return {
-      data: finalItems,
+      data: items,
       total: totalCount,
       page: filter.page,
       pageSize: filter.pageSize,
-      hasMore: offset + finalItems.length < totalCount,
+      hasMore: offset + items.length < totalCount,
     };
   } catch (err) {
     logger.error('Unexpected error fetching items', err);

@@ -59,7 +59,17 @@ const DEFAULT_SOURCE_CONFIGS: Record<string, Parameters<typeof createSource>[0]>
     description: 'Trending and recently created open-source AI projects on GitHub.',
     trust_level: 2,
     active: true,
-    config: { slug: 'github' },
+    config: { slug: 'github-ai-repos' },
+  },
+  'github-ai-repos': {
+    name: 'GitHub AI Repositories',
+    source_type: 'repository',
+    base_url: 'https://github.com',
+    feed_url: 'https://api.github.com/search/repositories',
+    description: 'Trending and recently created open-source AI projects on GitHub.',
+    trust_level: 2,
+    active: true,
+    config: { slug: 'github-ai-repos' },
   },
 };
 

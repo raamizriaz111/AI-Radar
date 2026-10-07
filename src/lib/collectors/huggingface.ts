@@ -20,6 +20,7 @@ import { classifyItem } from './classifier';
 import type { CollectorConfig, NormalizedItem } from './types';
 import { logger } from '@/lib/services/logger';
 
+const HF_DAILY_PAPERS_API = 'https://huggingface.co/api/daily_papers';
 const HF_PAPERS_RSS = 'https://huggingface.co/papers.rss';
 
 /**
@@ -38,8 +39,75 @@ export class HuggingFacePapersCollector extends BaseCollector {
 
   protected async fetchItems(config: CollectorConfig): Promise<NormalizedItem[]> {
     const maxItems = config.maxItems ?? 30;
-    logger.info(`[HuggingFace Papers] Fetching RSS feed`, { url: HF_PAPERS_RSS });
+    logger.info(`[HuggingFace Papers] Fetching daily papers API`, { url: HF_DAILY_PAPERS_API });
 
+    // 1. Try official JSON API first
+    const apiResult = await fetchWithRetry(HF_DAILY_PAPERS_API, {
+      timeoutMs: config.timeoutMs ?? 15_000,
+      maxRetries: config.maxRetries ?? 2,
+    });
+
+    if (apiResult.ok && apiResult.text) {
+      try {
+        const rawPapers = JSON.parse(apiResult.text);
+        if (Array.isArray(rawPapers) && rawPapers.length > 0) {
+          logger.info(`[HuggingFace Papers] Received ${rawPapers.length} papers from API`);
+          const items: NormalizedItem[] = [];
+          const seenUrls = new Set<string>();
+
+          for (const entry of rawPapers.slice(0, maxItems)) {
+            const paper = entry.paper || {};
+            const rawTitle = entry.title || paper.title;
+            const rawSummary = entry.summary || paper.summary || '';
+            const paperId = paper.id || entry.id;
+
+            if (!rawTitle) continue;
+
+            const canonicalUrl = paperId
+              ? normalizeUrl(`https://arxiv.org/abs/${paperId}`)
+              : normalizeUrl(`https://huggingface.co/papers/${paperId || ''}`);
+
+            if (seenUrls.has(canonicalUrl)) continue;
+            seenUrls.add(canonicalUrl);
+
+            const title = normalizeTitle(rawTitle);
+            const description = normalizeDescription(rawSummary, 1500);
+            const publishedAt = parseDate(entry.publishedAt || paper.publishedAt);
+            const authors = normalizeAuthors(
+              Array.isArray(paper.authors)
+                ? paper.authors.map((a: any) => a.name).filter(Boolean)
+                : []
+            );
+
+            const classification = classifyItem('huggingface', title, description);
+
+            items.push({
+              canonicalUrl,
+              externalId: paperId || null,
+              title,
+              description,
+              authors,
+              publishedAt,
+              itemType: classification.itemType,
+              categorySlugs: classification.categorySlugs,
+              metadata: {
+                hfLink: paperId ? `https://huggingface.co/papers/${paperId}` : null,
+                arxivId: paperId || null,
+                upvotes: paper.upvotes ?? entry.upvotes ?? 0,
+              },
+            });
+          }
+
+          logger.info(`[HuggingFace Papers] Returning ${items.length} items from JSON API`);
+          return items;
+        }
+      } catch (parseErr) {
+        logger.warn(`[HuggingFace Papers] Failed to parse JSON, falling back to RSS`, { error: parseErr });
+      }
+    }
+
+    // 2. Fallback to RSS if API fails
+    logger.info(`[HuggingFace Papers] Fetching fallback RSS feed`, { url: HF_PAPERS_RSS });
     const result = await fetchWithRetry(HF_PAPERS_RSS, {
       timeoutMs: config.timeoutMs ?? 15_000,
       maxRetries: config.maxRetries ?? 2,
@@ -59,7 +127,6 @@ export class HuggingFacePapersCollector extends BaseCollector {
     for (const entry of entries.slice(0, maxItems)) {
       if (!entry.title || !entry.link) continue;
 
-      // Prefer arXiv canonical URL when available (HF papers are primarily arXiv papers)
       const arxivId = extractArxivIdFromText(entry.link)
         ?? extractArxivIdFromText(entry.summary ?? '');
 

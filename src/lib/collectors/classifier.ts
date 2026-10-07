@@ -78,13 +78,83 @@ const KEYWORD_RULES: KeywordRule[] = [
   },
   // Coding agent / developer tools signals
   {
-    patterns: [/\bcopilot\b/i, /coding agent/i, /code assistant/i, /\bdevin\b/i, /\bcursor\b/i, /\btabby\b/i, /\bcody\b/i, /agentic coding/i, /autonomous coding/i, /\bswe-bench\b/i, /developer agent/i],
-    addCategories: [CAT.CODING],
+    patterns: [
+      /\bcopilot\b/i,
+      /coding agent/i,
+      /code assistant/i,
+      /\bdevin\b/i,
+      /\bcursor\b/i,
+      /\btabby\b/i,
+      /\bcody\b/i,
+      /agentic coding/i,
+      /autonomous coding/i,
+      /\bswe-bench\b/i,
+      /developer agent/i,
+      /claude code/i,
+      /\bopenhands\b/i,
+      /\baider\b/i,
+      /\broo-code\b/i,
+      /\bwindsurf\b/i,
+      /\bcline\b/i,
+      /coding assistant/i,
+      /programming agent/i,
+      /code generation/i,
+      /vibe coding/i,
+      /ide assistant/i,
+    ],
+    addCategories: [CAT.CODING, CAT.TOOLS],
+    setItemType: 'tool_release',
+  },
+  // AI Tools & applications signals
+  {
+    patterns: [
+      /\btool\b/i,
+      /\btools\b/i,
+      /\bapp\b/i,
+      /\bapps\b/i,
+      /\bsoftware\b/i,
+      /\bextension\b/i,
+      /\bplugin\b/i,
+      /\bsdk\b/i,
+      /\bframework\b/i,
+      /\blibrary\b/i,
+      /\bcli\b/i,
+      /\bworkspace\b/i,
+      /\bplayground\b/i,
+      /\bplatform\b/i,
+      /ai-powered/i,
+      /\butility\b/i,
+      /\bassistant\b/i,
+    ],
+    addCategories: [CAT.TOOLS],
     setItemType: 'tool_release',
   },
   // Model release signals
   {
-    patterns: [/\bgpt-\d/i, /\bclaude\b/i, /\bgemini\b/i, /\bllama\b/i, /\bmistral\b/i, /\bqwen\b/i, /\bpalm\b/i, /\bmodel release/i, /new model/i, /open.?source.*model/i, /foundation model/i, /language model/i, /multimodal/i],
+    patterns: [
+      /\bgpt-[345o]\b/i,
+      /\bgpt-\d/i,
+      /\bclaude\b/i,
+      /\bgemini\b/i,
+      /\bllama\b/i,
+      /\bmistral\b/i,
+      /\bqwen\b/i,
+      /\bdeepseek\b/i,
+      /\bgrok\b/i,
+      /\bo[13]\b/i,
+      /\bpalm\b/i,
+      /\bmodel release/i,
+      /new model/i,
+      /open.?source.*model/i,
+      /foundation model/i,
+      /language model/i,
+      /frontier model/i,
+      /reasoning model/i,
+      /multimodal/i,
+      /weights/i,
+      /transformer/i,
+      /diffusion model/i,
+    ],
     addCategories: [CAT.MODELS],
     setItemType: 'model_release',
   },
@@ -143,7 +213,11 @@ export function classifyItem(
     const matched = rule.patterns.some((p) => p.test(haystack));
     if (matched) {
       if (rule.setItemType) {
-        itemType = rule.setItemType;
+        if (sourceType === 'github' && (rule.setItemType === 'tool_release' || rule.setItemType === 'announcement')) {
+          // Keep primary itemType as repository for github sources
+        } else {
+          itemType = rule.setItemType;
+        }
       }
       if (rule.addCategories) {
         rule.addCategories.forEach((c) => categorySet.add(c));

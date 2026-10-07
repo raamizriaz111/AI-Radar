@@ -39,15 +39,15 @@ export function LivePulseBar({
       const res = await fetch('/api/collect', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug: 'world-ai-news' }),
+        body: JSON.stringify({}),
       });
 
       const data = await res.json();
 
       if (res.ok && data.ok) {
         setSyncStatus('success');
-        const created = data.result?.itemsCreated ?? 0;
-        setMessage(created > 0 ? `Synced! +${created} new stories ingested.` : 'Feed up to date.');
+        const created = data.totalCreated ?? data.result?.itemsCreated ?? 0;
+        setMessage(created > 0 ? `Synced! +${created} new items ingested across all desks.` : 'All feeds up to date.');
         router.refresh();
       } else {
         setSyncStatus('error');

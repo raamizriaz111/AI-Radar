@@ -30,9 +30,9 @@ const GITHUB_API_BASE = 'https://api.github.com';
 
 // AI-related search queries — focused, not exhaustive
 const AI_SEARCH_QUERIES = [
-  'topic:llm pushed:>2024-01-01 stars:>50',
-  'topic:large-language-model pushed:>2024-01-01 stars:>50',
-  'topic:ai-agent pushed:>2024-01-01 stars:>100',
+  'topic:coding-assistant stars:>50',
+  'topic:ai-agent stars:>100',
+  'topic:llm pushed:>2024-01-01 stars:>100',
 ];
 
 const REPOS_PER_QUERY = 15;
@@ -103,8 +103,8 @@ export class GitHubCollector extends BaseCollector {
         continue;
       }
 
-      // Rate limit: GitHub search has 10 req/min unauthenticated → add delay
-      await new Promise((r) => setTimeout(r, githubToken ? 2_500 : 7_000));
+      // Rate limit: 1.5s delay between queries is safe and prevents request timeouts
+      await new Promise((r) => setTimeout(r, githubToken ? 500 : 1_500));
 
       let parsed: GitHubSearchResponse;
       try {
@@ -136,11 +136,17 @@ export class GitHubCollector extends BaseCollector {
         const combinedText = `${title} ${description ?? ''} ${repo.topics.join(' ')}`;
         const classification = classifyItem('github', combinedText, description, repo.topics);
 
-        // Ensure coding-agents category for agent-topic repos
-        if (
-          repo.topics.some((t) => t.includes('agent') || t.includes('copilot') || t.includes('coding'))
-          && !classification.categorySlugs.includes('coding-agents')
-        ) {
+        // All GitHub developer repos are inherently AI tools
+        if (!classification.categorySlugs.includes('ai-tools')) {
+          classification.categorySlugs.push('ai-tools');
+        }
+
+        // Ensure coding-agents category for agent/coding repos
+        const isCodingOrAgent = repo.topics.some((t) =>
+          t.includes('agent') || t.includes('copilot') || t.includes('coding') || t.includes('assistant') || t.includes('developer')
+        ) || /agent|copilot|coding|code|assistant|ide/i.test(combinedText);
+
+        if (isCodingOrAgent && !classification.categorySlugs.includes('coding-agents')) {
           classification.categorySlugs.push('coding-agents');
         }
 

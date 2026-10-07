@@ -68,12 +68,12 @@ export function AdminDashboardView({ initialTelemetry }: AdminDashboardViewProps
       const res = await fetch('/api/collect', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug: 'world-ai-news' }),
+        body: JSON.stringify({}),
       });
       const data = await res.json();
       if (res.ok && data.ok) {
         setActionMessage({
-          text: `Collection pipeline finished. ${data.result?.itemsCreated ?? 0} new stories ingested.`,
+          text: `Collection pipeline finished. ${data.totalCreated ?? data.result?.itemsCreated ?? 0} new items ingested across all desks.`,
           type: 'success',
         });
         await refreshTelemetry();
