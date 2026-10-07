@@ -50,7 +50,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   // 2. Database prerequisites
   if (!isDatabaseConfigured() || !isServiceKeyConfigured()) {
     return NextResponse.json(
-      { error: 'Database or service key not configured in .env.local' },
+      { error: 'Database or service role key not configured in environment variables' },
       { status: 503 }
     );
   }

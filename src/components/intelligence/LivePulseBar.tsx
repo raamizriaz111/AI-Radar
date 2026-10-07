@@ -100,9 +100,9 @@ export function LivePulseBar({
         )}
 
         {syncStatus === 'error' && (
-          <span className="flex items-center gap-1 text-[11px] font-medium text-rose-400 animate-in fade-in">
-            <AlertCircle size={12} />
-            <span>{message}</span>
+          <span className="flex items-center gap-1 text-[11px] font-medium text-rose-400 animate-in fade-in max-w-[280px] sm:max-w-sm truncate" title={message}>
+            <AlertCircle size={12} className="flex-shrink-0" />
+            <span className="truncate">{message}</span>
           </span>
         )}
 
