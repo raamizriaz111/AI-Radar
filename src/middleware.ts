@@ -12,26 +12,27 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { parseSessionToken, SESSION_COOKIE_NAME } from '@/lib/auth/sessionCookie';
 
-// Exact public pages that unauthenticated visitors are permitted to view
-const PUBLIC_PAGES = new Set([
-  '/login',
-  '/signup',
-  '/pricing',
-  '/terms',
-  '/privacy',
-  '/welcome',
-]);
+// User-scoped pages that strictly require an active authenticated user session
+const AUTH_REQUIRED_PAGE_PREFIXES = [
+  '/settings',
+  '/account',
+  '/onboarding',
+  '/admin',
+  '/diagnostics',
+];
 
-// Public API endpoints that must accept unauthenticated traffic
-const PUBLIC_API_PREFIXES = [
-  '/api/auth/login',
-  '/api/auth/signup',
-  '/api/auth/logout',
-  '/api/auth/me',
-  '/api/auth/callback',
-  '/api/admin/login',
-  '/api/lemon/webhook',
-  '/api/health',
+// Mutating or user-specific API endpoints that strictly require authentication
+const AUTH_REQUIRED_API_PREFIXES = [
+  '/api/profile',
+  '/api/preferences',
+  '/api/onboarding',
+  '/api/saved',
+  '/api/auth/delete-account',
+  '/api/billing/checkout',
+  '/api/billing/portal',
+  '/api/billing/cancel',
+  '/api/billing/subscription',
+  '/api/billing/usage',
 ];
 
 /**
@@ -126,15 +127,10 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     return NextResponse.next();
   }
 
-  // 2. Always allow public API endpoints
-  if (PUBLIC_API_PREFIXES.some((prefix) => pathname.startsWith(prefix))) {
-    return NextResponse.next();
-  }
-
-  // 3. Resolve session status
+  // 2. Resolve session status
   const { authenticated, response } = await getAuthStatus(request);
 
-  // 4. Handle authenticated users visiting auth entry pages (/login or /signup)
+  // 3. Handle authenticated users visiting auth entry pages (/login or /signup)
   if (authenticated) {
     if (pathname === '/login' || pathname === '/signup') {
       const redirectParam = request.nextUrl.searchParams.get('redirect');
@@ -147,28 +143,25 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     return response;
   }
 
-  // 5. Unauthenticated user handling
-  // If the route is an explicit public page (e.g. /login, /signup, /terms, /privacy), allow it
-  if (PUBLIC_PAGES.has(pathname)) {
-    return NextResponse.next();
+  // 4. Unauthenticated user handling
+  // If attempting to access user-scoped pages (e.g. /settings, /account, /admin, /diagnostics), redirect to /login
+  if (AUTH_REQUIRED_PAGE_PREFIXES.some((prefix) => pathname.startsWith(prefix))) {
+    const loginUrl = new URL('/login', request.url);
+    loginUrl.searchParams.set('redirect', pathname + search);
+    return NextResponse.redirect(loginUrl);
   }
 
-  // If unauthenticated request hits an API endpoint not in public whitelist, return 401
-  if (pathname.startsWith('/api/')) {
+  // If unauthenticated request hits a protected mutating API endpoint, return 401
+  if (AUTH_REQUIRED_API_PREFIXES.some((prefix) => pathname.startsWith(prefix))) {
     return NextResponse.json(
-      { ok: false, error: 'Authentication required. Please sign in to access AI Radar.' },
+      { ok: false, error: 'Authentication required. Please sign in to access this feature.' },
       { status: 401 }
     );
   }
 
-  // For all other protected pages (/, /briefing, /news, /tools, /research, etc.):
-  // Redirect immediately to /login with preserved redirect destination
-  const loginUrl = new URL('/login', request.url);
-  if (pathname !== '/') {
-    loginUrl.searchParams.set('redirect', pathname + search);
-  }
-
-  return NextResponse.redirect(loginUrl);
+  // 5. All other pages are freely browseable in guest mode:
+  // (/, /news, /tools, /research, /coding-agents, /trends, /safety, /briefing, /career, /business, /bookmarks, /pricing, etc.)
+  return NextResponse.next();
 }
 
 export const config = {

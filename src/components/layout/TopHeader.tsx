@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { format } from 'date-fns';
 import { SearchButton } from '@/components/intelligence/SearchButton';
 import { useCurrentPlan } from '@/lib/hooks/useCurrentPlan';
+import { useAuthUser } from '@/lib/hooks/useAuthUser';
 
 interface TopHeaderProps {
   title: string;
@@ -13,6 +14,7 @@ interface TopHeaderProps {
 
 export function TopHeader({ title, description }: TopHeaderProps) {
   const { isFree, isPro, isAdvanced } = useCurrentPlan();
+  const { authenticated, loading } = useAuthUser();
   const [timeString, setTimeString] = useState<string>('');
   const [userTimeZone, setUserTimeZone] = useState<string>('');
 
@@ -41,9 +43,24 @@ export function TopHeader({ title, description }: TopHeaderProps) {
         )}
       </div>
 
-      <div className="flex flex-shrink-0 items-center gap-4 pl-4">
-        {/* Dynamic Tier Status Badge */}
-        {isAdvanced ? (
+      <div className="flex flex-shrink-0 items-center gap-3 xl:gap-4 pl-4">
+        {/* Dynamic Tier Status Badge for Members OR Guest Access CTAs */}
+        {!loading && !authenticated ? (
+          <div className="flex items-center gap-2">
+            <Link
+              href="/login"
+              className="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-white/[0.06] transition-colors"
+            >
+              Sign In
+            </Link>
+            <Link
+              href="/signup"
+              className="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground shadow-sm shadow-primary/20 hover:bg-primary/90 transition-all active:scale-[0.98]"
+            >
+              <span>Get Free Access</span>
+            </Link>
+          </div>
+        ) : isAdvanced ? (
           <Link
             href="/account/billing"
             className="hidden xl:flex items-center gap-1.5 rounded-full border border-purple-500/40 bg-purple-500/15 px-2.5 py-0.5 text-[10px] font-bold text-purple-300 font-mono hover:bg-purple-500/25 transition-colors"
@@ -65,7 +82,7 @@ export function TopHeader({ title, description }: TopHeaderProps) {
           <Link
             href="/account/billing"
             className="hidden xl:flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-2.5 py-0.5 text-[10px] font-medium text-emerald-400 font-mono hover:bg-emerald-500/10 transition-colors"
-            title="Active Tier: Free ($0/mo) · Manual Web Dashboard · Click to test Pro or Advanced"
+            title="Active Tier: Free ($0/mo) · Manual Web Dashboard · Click to manage plan"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
             <span>FREE TIER · MANUAL DASHBOARD</span>

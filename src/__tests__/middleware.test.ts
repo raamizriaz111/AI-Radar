@@ -22,20 +22,28 @@ describe('Auth & Route Protection Middleware', () => {
   }
 
   describe('Unauthenticated Visitors', () => {
-    it('redirects root / to /login', async () => {
+    it('allows unauthenticated visitor to freely browse root / intelligence feed', async () => {
       const req = createMockRequest('/');
       const res = await middleware(req);
 
-      expect(res.status).toBe(307);
-      expect(res.headers.get('location')).toBe('http://localhost:3000/login');
+      expect(res.status).toBe(200);
+      expect(res.headers.get('location')).toBeNull();
     });
 
-    it('redirects /briefing to /login with redirect parameter', async () => {
+    it('allows unauthenticated visitor to freely browse /briefing and desks', async () => {
       const req = createMockRequest('/briefing');
       const res = await middleware(req);
 
+      expect(res.status).toBe(200);
+      expect(res.headers.get('location')).toBeNull();
+    });
+
+    it('redirects /settings to /login with redirect parameter', async () => {
+      const req = createMockRequest('/settings');
+      const res = await middleware(req);
+
       expect(res.status).toBe(307);
-      expect(res.headers.get('location')).toBe('http://localhost:3000/login?redirect=%2Fbriefing');
+      expect(res.headers.get('location')).toBe('http://localhost:3000/login?redirect=%2Fsettings');
     });
 
     it('redirects /account/billing?plan=pro preserving query parameters', async () => {
@@ -84,7 +92,7 @@ describe('Auth & Route Protection Middleware', () => {
     });
 
     it('blocks unauthenticated requests to protected APIs with 401', async () => {
-      const req = createMockRequest('/api/protected-data');
+      const req = createMockRequest('/api/profile');
       const res = await middleware(req);
 
       expect(res.status).toBe(401);

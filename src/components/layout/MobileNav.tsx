@@ -112,31 +112,40 @@ export function MobileNav() {
 
         {/* Right side mobile actions: Tier Indicator + Search trigger + Menu toggle */}
         <div className="flex items-center gap-1.5 sm:gap-2">
-          {/* Mobile Active Tier Badge */}
-          <Link
-            href="/account/billing"
-            className={cn(
-              'flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-bold font-mono transition-colors',
-              isAdvanced
-                ? 'border border-purple-500/40 bg-purple-500/15 text-purple-300'
-                : isPro
-                ? 'border border-blue-500/30 bg-blue-500/15 text-blue-300'
-                : 'border border-emerald-500/20 bg-emerald-500/10 text-emerald-400'
-            )}
-            title={`Active Tier: ${displayName} · Click to manage plan`}
-          >
-            <span
+          {/* Mobile Active Tier Badge or Sign In button */}
+          {currentUser ? (
+            <Link
+              href="/account/billing"
               className={cn(
-                'h-1.5 w-1.5 rounded-full',
+                'flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-bold font-mono transition-colors',
                 isAdvanced
-                  ? 'bg-purple-400 animate-pulse'
+                  ? 'border border-purple-500/40 bg-purple-500/15 text-purple-300'
                   : isPro
-                  ? 'bg-blue-400 animate-pulse'
-                  : 'bg-emerald-500'
+                  ? 'border border-blue-500/30 bg-blue-500/15 text-blue-300'
+                  : 'border border-emerald-500/20 bg-emerald-500/10 text-emerald-400'
               )}
-            />
-            <span>{isAdvanced ? 'ADVANCED' : isPro ? 'PRO' : 'FREE'}</span>
-          </Link>
+              title={`Active Tier: ${displayName} · Click to manage plan`}
+            >
+              <span
+                className={cn(
+                  'h-1.5 w-1.5 rounded-full',
+                  isAdvanced
+                    ? 'bg-purple-400 animate-pulse'
+                    : isPro
+                    ? 'bg-blue-400 animate-pulse'
+                    : 'bg-emerald-500'
+                )}
+              />
+              <span>{isAdvanced ? 'ADVANCED' : isPro ? 'PRO' : 'FREE'}</span>
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              className="flex items-center gap-1 rounded-md border border-white/[0.1] bg-white/[0.04] px-2 py-0.5 text-[10px] font-semibold text-foreground hover:bg-white/[0.08] transition-colors"
+            >
+              <span>Sign In</span>
+            </Link>
+          )}
 
           <button
             type="button"

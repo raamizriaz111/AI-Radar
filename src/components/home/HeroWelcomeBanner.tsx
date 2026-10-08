@@ -142,13 +142,23 @@ export function HeroWelcomeBanner({ isAuthenticated = true }: HeroWelcomeBannerP
               <span>Explore Emerging Trends</span>
             </Link>
 
-            <Link
-              href="/settings"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.07] hover:border-white/15 px-3.5 py-2.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-all"
-            >
-              <SlidersHorizontal size={13} />
-              <span>Customize Signal Filters</span>
-            </Link>
+            {isAuthenticated ? (
+              <Link
+                href="/settings"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.07] hover:border-white/15 px-3.5 py-2.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-all"
+              >
+                <SlidersHorizontal size={13} />
+                <span>Customize Signal Filters</span>
+              </Link>
+            ) : (
+              <Link
+                href="/signup"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/10 hover:bg-primary/20 hover:border-primary/50 px-3.5 py-2.5 text-xs font-semibold text-primary transition-all"
+              >
+                <Sparkles size={13} />
+                <span>Create Free Radar Account</span>
+              </Link>
+            )}
           </div>
 
           <div className="hidden lg:flex items-center gap-2 text-[11px] text-muted-foreground/70 font-mono">
