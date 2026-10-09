@@ -208,7 +208,7 @@ export function MobileNav() {
 
             {/* Bottom session & footer */}
             <div className="mt-4 pt-3 pb-6 border-t border-white/[0.08] space-y-2.5">
-              {currentUser ? (
+              {currentUser && (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between rounded-lg border border-white/[0.06] bg-secondary/50 p-2.5 text-xs">
                     <div className="flex items-center gap-2 min-w-0">
@@ -216,19 +216,21 @@ export function MobileNav() {
                         {currentUser.name?.[0]?.toUpperCase() || 'U'}
                       </div>
                       <div className="min-w-0 truncate">
-                        <p className="truncate font-semibold text-foreground">{currentUser.name || 'Account'}</p>
-                        <span
-                          className={cn(
-                            'rounded px-1.5 py-0.2 text-[9px] font-mono font-bold uppercase',
-                            isAdvanced
-                              ? 'bg-purple-500/20 text-purple-300'
-                              : isPro
-                              ? 'bg-blue-500/20 text-blue-300'
-                              : 'bg-emerald-500/15 text-emerald-400'
+                        <div className="flex items-center gap-1.5">
+                          <p className="truncate font-semibold text-foreground">{currentUser.name || 'Account'}</p>
+                          {!isFree && (
+                            <span
+                              className={cn(
+                                'rounded px-1.5 py-0.2 text-[9px] font-mono font-bold uppercase',
+                                isAdvanced
+                                  ? 'bg-purple-500/20 text-purple-300'
+                                  : 'bg-blue-500/20 text-blue-300'
+                              )}
+                            >
+                              {displayName} Plan
+                            </span>
                           )}
-                        >
-                          {displayName} Plan
-                        </span>
+                        </div>
                       </div>
                     </div>
 
@@ -241,25 +243,6 @@ export function MobileNav() {
                     >
                       <LogOut size={15} />
                     </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-1.5">
-                  <div className="grid grid-cols-2 gap-2">
-                    <Link
-                      href="/login"
-                      onClick={() => setOpen(false)}
-                      className="flex min-h-[40px] items-center justify-center rounded-lg border border-white/[0.1] py-2.5 text-xs font-semibold text-foreground hover:bg-accent transition-colors"
-                    >
-                      Sign In
-                    </Link>
-                    <Link
-                      href="/signup"
-                      onClick={() => setOpen(false)}
-                      className="flex min-h-[40px] items-center justify-center rounded-lg bg-primary py-2.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
-                    >
-                      Get Started
-                    </Link>
                   </div>
                 </div>
               )}

@@ -238,7 +238,7 @@ export function Sidebar() {
 
       {/* User Session & Status Footer */}
       <div className="border-t border-white/[0.07] bg-card/50 p-3 space-y-2.5">
-        {currentUser ? (
+        {currentUser && (
           <div className="space-y-1.5">
             <div className="flex items-center justify-between rounded-lg border border-white/[0.06] bg-secondary/40 p-2">
               <Link
@@ -253,9 +253,11 @@ export function Sidebar() {
                     <p className="truncate text-xs font-semibold text-foreground">
                       {currentUser.name || 'Account'}
                     </p>
-                    <span className="rounded bg-primary/15 px-1 py-0.2 text-[8px] font-mono font-bold uppercase text-primary">
-                      {currentPlan}
-                    </span>
+                    {currentPlan && currentPlan.toLowerCase() !== 'free' && (
+                      <span className="rounded bg-primary/15 px-1 py-0.2 text-[8px] font-mono font-bold uppercase text-primary">
+                        {currentPlan}
+                      </span>
+                    )}
                   </div>
                   <p className="truncate text-[10px] text-muted-foreground/70 font-mono">
                     {currentUser.email || 'Active'}
@@ -271,28 +273,13 @@ export function Sidebar() {
               </button>
             </div>
           </div>
-        ) : (
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between rounded-lg border border-white/[0.06] bg-secondary/40 p-2 text-xs">
-              <Link
-                href="/login"
-                className="flex items-center gap-1.5 font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <LogIn size={13} />
-                <span>Sign In</span>
-              </Link>
-              <Link
-                href="/signup"
-                className="rounded-md bg-primary px-2.5 py-1 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm"
-              >
-                Get Started
-              </Link>
-            </div>
-          </div>
         )}
 
         {/* Public Trust & Operational Badges */}
-        <div className="pt-1.5 border-t border-white/[0.04] flex items-center justify-between px-1 text-[11px] text-muted-foreground/70 font-mono">
+        <div className={cn(
+          "flex items-center justify-between px-1 text-[11px] text-muted-foreground/70 font-mono",
+          currentUser && "pt-1.5 border-t border-white/[0.04]"
+        )}>
           {currentUser?.role === 'admin' ? (
             <Link
               href="/diagnostics"
