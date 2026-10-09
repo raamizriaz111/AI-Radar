@@ -14,6 +14,13 @@ import { isValidPlanSlug } from '@/lib/billing/planConfig';
 // Raw body required for signature verification
 export const dynamic = 'force-dynamic';
 
+export async function GET() {
+  return NextResponse.json(
+    { status: 'ok', service: 'billing-webhook-receiver' },
+    { status: 200 }
+  );
+}
+
 export async function POST(req: NextRequest) {
   const payload = await req.text();
   const signature =
