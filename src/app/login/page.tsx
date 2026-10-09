@@ -4,9 +4,9 @@
 // AI Radar — Professional Sign In Page
 // =============================================================================
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, ArrowRight, Newspaper, TrendingUp, Bot, FlaskConical, ShieldCheck, Radio } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, ArrowRight, Newspaper, TrendingUp, Bot, FlaskConical, ShieldCheck, Radio, CheckCircle2 } from 'lucide-react';
 
 const FEATURE_BULLETS = [
   { icon: Radio,        label: 'Real-time AI intelligence', sub: 'Live feed across 20+ frontier sources' },
@@ -23,6 +23,20 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading]           = useState(false);
   const [error, setError]               = useState<string | null>(null);
+  const [resetSuccess, setResetSuccess] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('reset') === 'success') {
+        setResetSuccess(true);
+      }
+      const err = params.get('error');
+      if (err) {
+        setError(err);
+      }
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -146,6 +160,14 @@ export default function LoginPage() {
             <p className="mt-1.5 text-sm text-muted-foreground">Sign in to your intelligence account.</p>
           </div>
 
+          {/* Reset password success banner */}
+          {resetSuccess && (
+            <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-3.5 text-sm text-emerald-400">
+              <CheckCircle2 size={15} className="flex-shrink-0 mt-0.5" />
+              <span className="leading-snug">Password updated successfully! Please sign in with your new password.</span>
+            </div>
+          )}
+
           {/* Error */}
           {error && (
             <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-red-500/20 bg-red-500/8 p-3.5 text-sm text-red-400">
@@ -183,7 +205,12 @@ export default function LoginPage() {
                 <label className="text-sm font-medium text-foreground" htmlFor="password">
                   Password
                 </label>
-                <span className="text-xs text-muted-foreground/50 cursor-not-allowed select-none">Forgot password?</span>
+                <Link
+                  href="/forgot-password"
+                  className="text-xs text-primary/80 hover:text-primary transition-colors focus:outline-none focus:underline"
+                >
+                  Forgot password?
+                </Link>
               </div>
               <div className="relative">
                 <Lock size={15} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60" />

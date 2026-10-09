@@ -529,6 +529,18 @@ export const SignInSchema = z.object({
 
 export type SignInInput = z.infer<typeof SignInSchema>;
 
+export const ForgotPasswordSchema = z.object({
+  email: z.string().email('Please enter a valid email address'),
+});
+
+export type ForgotPasswordInput = z.infer<typeof ForgotPasswordSchema>;
+
+export const ResetPasswordSchema = z.object({
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+});
+
+export type ResetPasswordInput = z.infer<typeof ResetPasswordSchema>;
+
 export const OnboardingSchema = z.object({
   name: z.string().max(100).optional(),
   experience_level: ExperienceLevelEnum.optional().default('intermediate'),

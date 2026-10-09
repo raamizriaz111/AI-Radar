@@ -132,7 +132,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 
   // 3. Handle authenticated users visiting auth entry pages (/login or /signup)
   if (authenticated) {
-    if (pathname === '/login' || pathname === '/signup') {
+    if (pathname === '/login' || pathname === '/signup' || pathname === '/forgot-password') {
       const redirectParam = request.nextUrl.searchParams.get('redirect');
       const target =
         redirectParam && redirectParam.startsWith('/') && !redirectParam.startsWith('//')

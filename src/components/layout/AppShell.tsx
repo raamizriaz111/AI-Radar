@@ -14,10 +14,22 @@ import { usePathname } from 'next/navigation';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { MobileNav } from '@/components/layout/MobileNav';
 
-const STANDALONE_ROUTES = ['/login', '/signup', '/terms', '/privacy'];
+const STANDALONE_ROUTES = ['/login', '/signup', '/forgot-password', '/reset-password', '/terms', '/privacy'];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hash) {
+      const hash = window.location.hash;
+      if (
+        (hash.includes('type=recovery') || hash.includes('access_token=')) &&
+        !window.location.pathname.startsWith('/reset-password')
+      ) {
+        window.location.href = `/reset-password${hash}`;
+      }
+    }
+  }, []);
 
   const isStandalone = STANDALONE_ROUTES.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`)
