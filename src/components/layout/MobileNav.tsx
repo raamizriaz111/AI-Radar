@@ -115,7 +115,7 @@ export function MobileNav() {
           {/* Mobile Active Tier Badge or Sign In button */}
           {currentUser ? (
             <Link
-              href="/account/billing"
+              href="/pricing"
               className={cn(
                 'flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-bold font-mono transition-colors',
                 isAdvanced

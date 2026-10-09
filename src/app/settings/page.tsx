@@ -29,10 +29,10 @@ export default function SettingsPage() {
             description="Manage your active plan, usage allowances, and billing history."
             action={
               <Link
-                href="/account/billing"
+                href="/pricing"
                 className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
-                Open Billing <ArrowRight size={12} />
+                Pricing & Plans <ArrowRight size={12} />
               </Link>
             }
           />
@@ -46,7 +46,7 @@ export default function SettingsPage() {
                 href="/pricing"
                 className="text-xs text-primary hover:underline flex items-center gap-1"
               >
-                View pricing <ArrowRight size={10} />
+                View pricing & plans <ArrowRight size={10} />
               </Link>
             </div>
             <p className="text-xs text-muted-foreground">
@@ -58,13 +58,7 @@ export default function SettingsPage() {
                 href="/pricing"
                 className="rounded-md border border-border bg-muted/30 px-3 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
               >
-                View Plans
-              </Link>
-              <Link
-                href="/account/billing"
-                className="rounded-md border border-border bg-muted/30 px-3 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
-              >
-                Billing & Usage
+                Pricing & Plans
               </Link>
             </div>
           </div>

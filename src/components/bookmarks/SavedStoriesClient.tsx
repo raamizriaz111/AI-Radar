@@ -558,13 +558,13 @@ export function SavedStoriesClient({
                     </div>
                     <div className="flex items-center gap-2">
                       <Link
-                        href="/account/billing?select=pro"
+                        href="/pricing?select=pro"
                         className="rounded-lg bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm"
                       >
                         Upgrade to Pro ($10/mo)
                       </Link>
                       <Link
-                        href="/account/billing?select=advanced"
+                        href="/pricing?select=advanced"
                         className="rounded-lg border border-purple-500/40 bg-purple-500/10 px-3 py-1.5 text-xs font-semibold text-purple-300 hover:bg-purple-500/20 transition-colors shadow-sm"
                       >
                         Upgrade to Advanced ($20/mo)
@@ -575,10 +575,10 @@ export function SavedStoriesClient({
 
                 <div className="flex items-center justify-between pt-2">
                   <Link
-                    href="/account/billing"
+                    href="/pricing"
                     className="text-xs text-primary underline hover:text-primary/80"
                   >
-                    View Account & Billing Plans →
+                    View Pricing & Plans →
                   </Link>
                   <button
                     onClick={() => setShowExportModal(false)}

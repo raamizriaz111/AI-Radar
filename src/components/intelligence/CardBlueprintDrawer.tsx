@@ -142,14 +142,14 @@ export function CardBlueprintDrawer({ item, isOpen, onClose }: CardBlueprintDraw
 
             <div className="flex items-center gap-2 flex-wrap justify-center">
               <Link
-                href="/account/billing?select=pro"
+                href="/pricing?select=pro"
                 className="inline-flex min-h-[34px] items-center gap-1.5 rounded-lg bg-primary px-3.5 py-1.5 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm"
               >
                 <Sparkles size={12} />
                 <span>Unlock with Pro ($10/mo)</span>
               </Link>
               <Link
-                href="/account/billing?select=advanced"
+                href="/pricing?select=advanced"
                 className="inline-flex min-h-[34px] items-center gap-1.5 rounded-lg border border-purple-500/40 bg-purple-500/10 px-3.5 py-1.5 text-xs font-semibold text-purple-300 hover:bg-purple-500/20 transition-colors"
               >
                 <span>Upgrade to Advanced ($20/mo)</span>
@@ -232,7 +232,7 @@ export function CardBlueprintDrawer({ item, isOpen, onClose }: CardBlueprintDraw
                 ? '⚡ Advanced Plan: Full Code Blueprint + JSON API Payload Unlocked'
                 : '✓ Pro Plan: Code Blueprint Unlocked'}
             </span>
-            <Link href="/account/billing" className="hover:text-primary transition-colors">
+            <Link href="/pricing" className="hover:text-primary transition-colors">
               Manage Tier Settings →
             </Link>
           </div>

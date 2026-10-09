@@ -33,16 +33,7 @@ export default function PricingPage() {
 
         <PricingTableClient plans={plans} />
 
-        {/* Plan Limits & Features Card */}
-        <div className="mb-8 rounded-xl border border-white/[0.08] bg-card/60 p-4 text-center">
-          <p className="text-xs text-muted-foreground">
-            Evaluating plans for your workflow?{' '}
-            <Link href="/account/billing" className="text-primary font-semibold hover:underline">
-              Review Full Plan Limits &amp; Features →
-            </Link>{' '}
-            Compare Free, Pro, and Advanced across real-time alert triggers, daily digests, and API quotas.
-          </p>
-        </div>
+
 
         {/* Why Autonomous Push Section */}
         <div className="mb-6 rounded-xl border border-white/[0.08] bg-card p-5">
@@ -100,18 +91,14 @@ export default function PricingPage() {
 
         <div className="rounded-lg border border-border bg-card p-4 text-center">
           <p className="text-xs text-muted-foreground">
-            Questions about pricing?{' '}
+            Questions about your account or plan?{' '}
             <Link href="/settings" className="text-primary hover:underline">
               Visit Settings
             </Link>{' '}
-            to manage your subscription or{' '}
-            <Link href="/account/billing" className="text-primary hover:underline">
-              view your billing details
-            </Link>
-            .
+            or reach out to support.
           </p>
-          <p className="text-[11px] text-muted-foreground/60 mt-2">
-            All prices in USD. No hidden fees. Cancel anytime.
+          <p className="text-[11px] text-muted-foreground/60 mt-1 font-mono">
+            All prices in USD · 256-bit SSL encrypted · Cancel anytime in 1 click
           </p>
         </div>
       </PageContainer>

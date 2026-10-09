@@ -54,7 +54,7 @@ export function TopHeader({ title, description }: TopHeaderProps) {
           </Link>
         ) : isAdvanced ? (
           <Link
-            href="/account/billing"
+            href="/pricing"
             className="hidden xl:flex items-center gap-1.5 rounded-full border border-purple-500/40 bg-purple-500/15 px-2.5 py-0.5 text-[10px] font-bold text-purple-300 font-mono hover:bg-purple-500/25 transition-colors"
             title="Active Tier: Advanced ($20/mo) · Programmatic REST API, Code Blueprints & Push Webhooks Active"
           >
@@ -63,7 +63,7 @@ export function TopHeader({ title, description }: TopHeaderProps) {
           </Link>
         ) : isPro ? (
           <Link
-            href="/account/billing"
+            href="/pricing"
             className="hidden xl:flex items-center gap-1.5 rounded-full border border-blue-500/30 bg-blue-500/15 px-2.5 py-0.5 text-[10px] font-bold text-blue-300 font-mono hover:bg-blue-500/25 transition-colors"
             title="Active Tier: Pro ($10/mo) · 7:00 AM Executive Digest & Architecture Blueprints Unlocked"
           >
@@ -72,7 +72,7 @@ export function TopHeader({ title, description }: TopHeaderProps) {
           </Link>
         ) : (
           <Link
-            href="/account/billing"
+            href="/pricing"
             className="hidden xl:flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-2.5 py-0.5 text-[10px] font-medium text-emerald-400 font-mono hover:bg-emerald-500/10 transition-colors"
             title="Active Tier: Free ($0/mo) · Manual Web Dashboard · Click to manage plan"
           >

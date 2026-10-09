@@ -21,14 +21,14 @@ export const VALID_COUPONS: Record<string, CouponDefinition> = {
     code: 'RaamizPro',
     planSlug: 'pro',
     discountPercent: 100,
-    displayName: 'RaamizPro VIP Pass',
+    displayName: 'VIP Pro Pass',
     description: '100% off Pro Tier intelligence feeds and daily executive digests.',
   },
   raamizadv: {
     code: 'RaamizAdv',
     planSlug: 'advanced',
     discountPercent: 100,
-    displayName: 'RaamizAdv Power Pass',
+    displayName: 'VIP Advanced Pass',
     description: '100% off Advanced Tier with programmatic API access, blueprints, and real-time alerts.',
   },
 };

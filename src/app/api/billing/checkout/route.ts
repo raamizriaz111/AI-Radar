@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
       planSlug,
       billingInterval,
       discountCode: appliedDiscountCode,
-      successUrl: successUrl ?? `${appUrl}/account/billing?success=true`,
+      successUrl: successUrl ?? `${appUrl}/pricing?success=true`,
       cancelUrl: cancelUrl ?? `${appUrl}/pricing?canceled=true`,
     });
 

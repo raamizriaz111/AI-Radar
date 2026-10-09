@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     const user = await requireAuth();
     const body = await req.json().catch(() => ({}));
     const returnUrl = (body as { returnUrl?: string }).returnUrl
-      ?? `${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/account/billing`;
+      ?? `${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/pricing`;
 
     const provider = getBillingProvider();
 

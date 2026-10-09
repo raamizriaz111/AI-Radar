@@ -24,6 +24,11 @@ const nextConfig: NextConfig = {
         destination: '/',
         permanent: true,
       },
+      {
+        source: '/account/billing',
+        destination: '/pricing',
+        permanent: false,
+      },
     ];
   },
 };

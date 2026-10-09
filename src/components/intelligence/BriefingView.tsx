@@ -368,14 +368,14 @@ export function BriefingView({ currentBriefing, history }: BriefingViewProps) {
                       </p>
                       <div className="flex items-center gap-2.5 flex-wrap justify-center">
                         <Link
-                          href="/account/billing?select=pro"
+                          href="/pricing?select=pro"
                           className="inline-flex min-h-[38px] items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm"
                         >
                           <Sparkles size={13} />
                           <span>Unlock with Pro ($10/mo)</span>
                         </Link>
                         <Link
-                          href="/account/billing?select=advanced"
+                          href="/pricing?select=advanced"
                           className="inline-flex min-h-[38px] items-center gap-1.5 rounded-lg border border-purple-500/40 bg-purple-500/10 px-4 py-2 text-xs font-semibold text-purple-300 hover:bg-purple-500/20 transition-colors"
                         >
                           <span>Upgrade to Advanced ($20/mo)</span>
@@ -549,14 +549,14 @@ export function BriefingView({ currentBriefing, history }: BriefingViewProps) {
 
             <div className="flex flex-col sm:flex-row items-center gap-2">
               <Link
-                href="/account/billing?select=pro"
+                href="/pricing?select=pro"
                 className="w-full sm:w-auto flex-1 inline-flex min-h-[38px] items-center justify-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm"
               >
                 <Sparkles size={13} />
                 <span>Upgrade to Pro ($10/mo)</span>
               </Link>
               <Link
-                href="/account/billing?select=advanced"
+                href="/pricing?select=advanced"
                 className="w-full sm:w-auto inline-flex min-h-[38px] items-center justify-center rounded-lg border border-purple-500/40 bg-purple-500/10 px-4 py-2 text-xs font-semibold text-purple-300 hover:bg-purple-500/20 transition-colors"
               >
                 <span>Upgrade to Advanced ($20/mo)</span>

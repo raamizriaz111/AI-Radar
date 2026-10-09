@@ -1,13 +1,14 @@
 'use client';
 
 // =============================================================================
-// AI Radar — Senior Executive Interactive Pricing Table
+// AI Radar — Senior Executive Interactive Pricing & Plan Management
 // =============================================================================
-// Supports instant Monthly / Annual toggle with live discount calculation,
-// dynamic interval routing, and Lemon Squeezy MoR trust badges.
+// Unified in-page upgrade experience: clicking upgrade opens the CheckoutModal
+// directly without loading another page. Includes in-checkout promo validation
+// and administrator testing controls.
 // =============================================================================
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Check,
@@ -19,8 +20,12 @@ import {
   ShieldCheck,
   CreditCard,
   Lock,
+  CheckCircle2,
+  RefreshCw,
 } from 'lucide-react';
 import type { PlanConfig } from '@/lib/billing/planConfig';
+import { useAuthUser } from '@/lib/hooks/useAuthUser';
+import { CheckoutModal } from '@/components/billing/CheckoutModal';
 import { cn } from '@/lib/utils';
 
 interface PricingTableClientProps {
@@ -34,10 +39,154 @@ const PLAN_ICONS: Record<string, React.ElementType> = {
 };
 
 export function PricingTableClient({ plans }: PricingTableClientProps) {
+  const { user, authenticated } = useAuthUser();
   const [interval, setInterval] = useState<'monthly' | 'annual'>('monthly');
+  const [currentPlanSlug, setCurrentPlanSlug] = useState<string>('free');
+
+  // Modal checkout state
+  const [selectedPlanForCheckout, setSelectedPlanForCheckout] = useState<PlanConfig | null>(null);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+
+  // Status & admin state
+  const [adminLoading, setAdminLoading] = useState(false);
+  const [successBanner, setSuccessBanner] = useState<string | null>(null);
+
+  useEffect(() => {
+    // 1. Fetch current user subscription tier
+    fetch('/api/billing/subscription')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.plan?.slug) {
+          setCurrentPlanSlug(data.plan.slug);
+        }
+      })
+      .catch(() => {});
+
+    // 2. Check query params for instant checkout or payment confirmation
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const selectParam = params.get('select');
+      const intervalParam = params.get('interval') as 'monthly' | 'annual' | null;
+
+      if (intervalParam === 'annual' || intervalParam === 'monthly') {
+        setInterval(intervalParam);
+      }
+
+      if (selectParam) {
+        const target = plans.find((p) => p.slug === selectParam);
+        if (target && target.slug !== 'free') {
+          setSelectedPlanForCheckout(target);
+          setIsCheckoutOpen(true);
+        }
+      }
+
+      if (params.get('success') === 'true') {
+        setSuccessBanner('Payment successful! Your intelligence subscription is active.');
+        setTimeout(() => setSuccessBanner(null), 6000);
+      }
+    }
+  }, [plans]);
+
+  const openCheckout = (plan: PlanConfig) => {
+    setSelectedPlanForCheckout(plan);
+    setIsCheckoutOpen(true);
+  };
+
+  const handlePlanActivated = (newSlug: string) => {
+    setCurrentPlanSlug(newSlug);
+    setSuccessBanner(`Your account has been upgraded to ${newSlug.toUpperCase()}!`);
+    setTimeout(() => setSuccessBanner(null), 5000);
+  };
+
+  const handleAdminTierSwitch = async (targetSlug: string) => {
+    if (adminLoading) return;
+    setAdminLoading(true);
+    try {
+      const res = await fetch('/api/billing/subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          planSlug: targetSlug,
+          billingInterval: interval,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        setCurrentPlanSlug(targetSlug);
+        setSuccessBanner(`Admin sandbox: Switched active tier to ${targetSlug.toUpperCase()}.`);
+        setTimeout(() => setSuccessBanner(null), 4000);
+      }
+    } catch {
+      // Ignore admin sandbox errors
+    } finally {
+      setAdminLoading(false);
+    }
+  };
+
+  const handleSwitchToFree = async () => {
+    try {
+      const res = await fetch('/api/billing/subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          planSlug: 'free',
+          billingInterval: 'none',
+        }),
+      });
+      if (res.ok) {
+        setCurrentPlanSlug('free');
+        setSuccessBanner('Switched back to Free tier.');
+        setTimeout(() => setSuccessBanner(null), 4000);
+      }
+    } catch {
+      // Ignore
+    }
+  };
 
   return (
     <div className="space-y-8">
+      {/* Success banner */}
+      {successBanner && (
+        <div className="flex items-center gap-2.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3.5 text-xs text-emerald-300 animate-in fade-in duration-200">
+          <CheckCircle2 size={16} className="text-emerald-400 flex-shrink-0" />
+          <span>{successBanner}</span>
+        </div>
+      )}
+
+      {/* Administrator Interactive Sandbox (Visible strictly to admins) */}
+      {user?.role === 'admin' && (
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 text-xs backdrop-blur-sm">
+          <div className="flex items-center justify-between mb-2">
+            <span className="font-semibold text-amber-400 flex items-center gap-1.5">
+              <ShieldCheck size={14} />
+              <span>Administrator Interactive Sandbox</span>
+            </span>
+            <span className="text-[10px] text-amber-300/70 font-mono">Admin testing mode</span>
+          </div>
+          <p className="text-muted-foreground mb-3 text-[11px]">
+            Test feature sets instantly with zero-billing 1-click tier switching.
+          </p>
+          <div className="flex items-center gap-2">
+            {['free', 'pro', 'advanced'].map((slug) => (
+              <button
+                key={slug}
+                type="button"
+                disabled={adminLoading}
+                onClick={() => handleAdminTierSwitch(slug)}
+                className={cn(
+                  'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all capitalize',
+                  currentPlanSlug === slug
+                    ? 'bg-amber-400 text-black font-bold shadow-sm'
+                    : 'bg-white/[0.05] border border-white/[0.08] text-foreground hover:bg-white/[0.1]'
+                )}
+              >
+                {slug} Tier
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Interactive Billing Interval Switcher */}
       <div className="flex flex-col items-center justify-center gap-3">
         <div className="inline-flex items-center rounded-full border border-white/[0.1] bg-secondary/50 p-1 shadow-inner backdrop-blur-md">
@@ -89,6 +238,7 @@ export function PricingTableClient({ plans }: PricingTableClientProps) {
           const Icon = PLAN_ICONS[plan.slug] ?? Zap;
           const isPro = plan.slug === 'pro';
           const isAdvanced = plan.slug === 'advanced';
+          const isCurrentActive = currentPlanSlug === plan.slug;
 
           // Compute pricing based on active interval
           const isAnnual = interval === 'annual';
@@ -115,7 +265,6 @@ export function PricingTableClient({ plans }: PricingTableClientProps) {
             >
               {/* Card Header & Content */}
               <div>
-                {/* Top Badge & Tier Row (In-flow: Zero overlap, perfectly visible across all screen sizes) */}
                 <div className="mb-4 flex items-center justify-between min-h-[22px]">
                   <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
                     {plan.slug === 'free' ? 'Starter Tier' : plan.slug === 'pro' ? 'Intelligence Tier' : 'Full Power Suite'}
@@ -279,42 +428,48 @@ export function PricingTableClient({ plans }: PricingTableClientProps) {
                 </ul>
               </div>
 
-              {/* Action Link Button */}
-              <Link
-                href={
-                  plan.slug === 'free'
-                    ? '/account/billing'
-                    : `/account/billing?select=${plan.slug}&interval=${interval}`
-                }
-                className={cn(
-                  'w-full min-h-[42px] rounded-xl px-4 py-2.5 text-center text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 active:scale-95',
-                  isPro
-                    ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-primary/25'
-                    : isAdvanced
-                    ? 'bg-purple-600 text-white hover:bg-purple-500 shadow-purple-600/25'
-                    : 'border border-white/[0.08] bg-secondary/80 text-foreground hover:bg-secondary'
-                )}
-              >
+              {/* Action Button: Opens Checkout Modal in-page without reloading */}
+              <div>
                 {plan.slug === 'free' ? (
-                  <span>Get Started Free</span>
-                ) : isPro ? (
-                  <>
-                    <Sparkles size={13} />
-                    <span>
-                      {isAnnual ? 'Upgrade to Pro Annual ($100)' : 'Upgrade to Pro ($10/mo)'}
-                    </span>
-                    <ArrowRight size={13} />
-                  </>
+                  isCurrentActive ? (
+                    <div className="w-full min-h-[42px] rounded-xl px-4 py-2.5 text-center text-xs font-semibold border border-white/[0.08] bg-white/[0.03] text-muted-foreground flex items-center justify-center gap-1.5 cursor-default">
+                      <span>Current Plan</span>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleSwitchToFree}
+                      className="w-full min-h-[42px] rounded-xl px-4 py-2.5 text-center text-xs font-semibold border border-white/[0.08] bg-secondary/80 text-foreground hover:bg-secondary flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                    >
+                      <span>Switch to Free Plan</span>
+                    </button>
+                  )
+                ) : isCurrentActive ? (
+                  <div className="w-full min-h-[42px] rounded-xl px-4 py-2.5 text-center text-xs font-bold border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 flex items-center justify-center gap-1.5 cursor-default">
+                    <CheckCircle2 size={13} />
+                    <span>Active Subscription</span>
+                  </div>
                 ) : (
-                  <>
+                  <button
+                    type="button"
+                    onClick={() => openCheckout(plan)}
+                    className={cn(
+                      'w-full min-h-[42px] rounded-xl px-4 py-2.5 text-center text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer',
+                      isPro
+                        ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-primary/25'
+                        : 'bg-purple-600 text-white hover:bg-purple-500 shadow-purple-600/25'
+                    )}
+                  >
                     <Sparkles size={13} />
                     <span>
-                      {isAnnual ? 'Upgrade to Advanced Annual ($200)' : 'Upgrade to Advanced ($20/mo)'}
+                      {isAnnual
+                        ? `Upgrade to ${plan.displayName} Annual ($${plan.priceAnnualUsd})`
+                        : `Upgrade to ${plan.displayName} ($${plan.priceMonthlyUsd}/mo)`}
                     </span>
                     <ArrowRight size={13} />
-                  </>
+                  </button>
                 )}
-              </Link>
+              </div>
             </div>
           );
         })}
@@ -342,6 +497,21 @@ export function PricingTableClient({ plans }: PricingTableClientProps) {
           International receipts & tax compliance handled automatically. Cancel anytime in 1 click from your dashboard.
         </p>
       </div>
+
+      {/* In-Page Checkout Modal */}
+      {selectedPlanForCheckout && (
+        <CheckoutModal
+          isOpen={isCheckoutOpen}
+          onClose={() => {
+            setIsCheckoutOpen(false);
+            setSelectedPlanForCheckout(null);
+          }}
+          plan={selectedPlanForCheckout}
+          initialInterval={interval}
+          user={user}
+          onPlanActivated={handlePlanActivated}
+        />
+      )}
     </div>
   );
 }
