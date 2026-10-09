@@ -12,7 +12,6 @@
 import React from 'react';
 import Link from 'next/link';
 import {
-  Sparkles,
   ArrowRight,
   ShieldCheck,
   Zap,
@@ -110,7 +109,7 @@ export function HeroWelcomeBanner({ isAuthenticated = true }: HeroWelcomeBannerP
           <div className="group rounded-xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.1] p-3.5 transition-all">
             <div className="flex items-center gap-2 mb-1.5">
               <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-400">
-                <Sparkles size={13} />
+                <TrendingUp size={13} />
               </div>
               <span className="font-semibold text-foreground text-xs">
                 Forward Horizon
@@ -152,11 +151,11 @@ export function HeroWelcomeBanner({ isAuthenticated = true }: HeroWelcomeBannerP
               </Link>
             ) : (
               <Link
-                href="/signup"
-                className="inline-flex items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/10 hover:bg-primary/20 hover:border-primary/50 px-3.5 py-2.5 text-xs font-semibold text-primary transition-all"
+                href="/login"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/[0.12] px-3.5 py-2.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-all"
               >
-                <Sparkles size={13} />
-                <span>Create Free Radar Account</span>
+                <SlidersHorizontal size={13} />
+                <span>Sign in to personalize</span>
               </Link>
             )}
           </div>

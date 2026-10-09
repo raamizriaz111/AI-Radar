@@ -44,22 +44,14 @@ export function TopHeader({ title, description }: TopHeaderProps) {
       </div>
 
       <div className="flex flex-shrink-0 items-center gap-3 xl:gap-4 pl-4">
-        {/* Dynamic Tier Status Badge for Members OR Guest Access CTAs */}
+        {/* Guest: single clean "Sign in" — Members: dynamic tier badge */}
         {!loading && !authenticated ? (
-          <div className="flex items-center gap-2">
-            <Link
-              href="/login"
-              className="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-white/[0.06] transition-colors"
-            >
-              Sign In
-            </Link>
-            <Link
-              href="/signup"
-              className="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground shadow-sm shadow-primary/20 hover:bg-primary/90 transition-all active:scale-[0.98]"
-            >
-              <span>Get Free Access</span>
-            </Link>
-          </div>
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-foreground/80 hover:text-foreground hover:bg-white/[0.07] hover:border-white/[0.14] transition-all"
+          >
+            Sign in
+          </Link>
         ) : isAdvanced ? (
           <Link
             href="/account/billing"
