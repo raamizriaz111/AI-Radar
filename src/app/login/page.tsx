@@ -240,7 +240,7 @@ export default function LoginPage() {
             href="/signup"
             className="flex w-full items-center justify-center rounded-xl border border-white/[0.1] bg-white/[0.03] py-3 text-sm font-medium text-foreground hover:bg-white/[0.06] hover:border-white/[0.15] focus:outline-none focus:ring-2 focus:ring-white/20 transition-all"
           >
-            Create an account
+            Sign Up
           </Link>
 
           {/* Legal */}
