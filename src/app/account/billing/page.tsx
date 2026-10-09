@@ -332,9 +332,9 @@ export default function BillingPage() {
         }
       }
 
-      // If user is a public visitor (not in test mode) OR forceCheckout is explicitly requested:
-      // They must proceed through real Lemon Squeezy checkout.
-      if (!canUseTestMode || options?.forceCheckout) {
+      // If user is a standard user (not admin) OR forceCheckout is explicitly requested:
+      // They must proceed through real hosted checkout.
+      if (!isAdmin || options?.forceCheckout) {
         if (isGuest) {
           window.location.href = `/login?redirect=${encodeURIComponent(`/account/billing?select=${newPlanSlug}`)}`;
           return;
@@ -361,7 +361,7 @@ export default function BillingPage() {
           return;
         }
 
-        setError(checkoutData.error || 'Failed to initialize Lemon Squeezy checkout.');
+        setError(checkoutData.error || 'Failed to initialize checkout.');
         return;
       }
 
@@ -500,22 +500,22 @@ export default function BillingPage() {
               </div>
             )}
 
-            {/* Direct Persona Tester (Restricted to Development / Admin Mode) */}
-            {canUseTestMode && (
+            {/* Direct Persona Tester (Restricted Strictly to Admin Mode) */}
+            {isAdmin && (
               <div className="rounded-xl border border-primary/30 bg-primary/[0.06] p-4 backdrop-blur-md">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <div>
                     <div className="flex items-center gap-2">
                       <Sparkles size={15} className="text-primary" />
                       <h3 className="text-xs font-bold text-foreground">
-                        {isAdmin ? 'Admin Persona Tester' : 'Developer Sandbox Persona Tester'}
+                        Admin Persona Tester
                       </h3>
                       <span className="rounded bg-primary/20 text-primary border border-primary/30 px-2 py-0.5 text-[10px] font-mono font-bold uppercase">
-                        Test Mode Active
+                        Admin Sandbox Active
                       </span>
                     </div>
                     <p className="text-[11px] text-muted-foreground mt-0.5">
-                      Bypass payment in {isAdmin ? 'admin' : 'development'} mode to test Free vs Advanced limits, digests, and blueprints. Public visitors must pay through Lemon Squeezy.
+                      Bypass payment in admin mode to test Free vs Advanced limits, digests, and blueprints. Standard users must buy plans through checkout.
                     </p>
                   </div>
 
@@ -561,12 +561,12 @@ export default function BillingPage() {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4 pb-3 border-b border-white/[0.06]">
                 <div>
                   <div className="flex items-center gap-2">
-                    {canUseTestMode ? (
+                    {isAdmin ? (
                       <>
                         <Sparkles size={16} className="text-primary animate-pulse-dot" />
                         <h2 className="text-base font-bold text-foreground">Tier Privilege Console</h2>
                         <span className="rounded-full bg-primary/10 border border-primary/20 px-2.5 py-0.5 text-[10px] font-mono font-bold text-primary uppercase">
-                          {isAdmin ? 'Admin Test Mode' : 'Dev Test Mode'}
+                          Admin Sandbox
                         </span>
                       </>
                     ) : (
@@ -574,7 +574,7 @@ export default function BillingPage() {
                         <CreditCard size={16} className="text-primary" />
                         <h2 className="text-base font-bold text-foreground">Available Subscription Plans</h2>
                         <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-[10px] font-mono font-bold text-emerald-400 uppercase">
-                          Lemon Squeezy Checkout
+                          Secure Checkout
                         </span>
                       </>
                     )}
@@ -742,8 +742,8 @@ export default function BillingPage() {
                               <span>Downgrade to Free</span>
                             )}
                           </button>
-                        ) : canUseTestMode ? (
-                          /* Test Mode (Dev or Admin): Instant Switch + Option to test real checkout */
+                        ) : isAdmin ? (
+                          /* Admin Mode: Instant Switch + Option to test real checkout */
                           <div className="space-y-1.5">
                             <button
                               type="button"
@@ -757,7 +757,7 @@ export default function BillingPage() {
                                   ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-primary/20'
                                   : 'bg-purple-600 text-white hover:bg-purple-500 shadow-purple-600/20'
                               )}
-                              title="Instant tier switch (Admin / Developer test mode)"
+                              title="Instant tier switch (Admin test mode)"
                             >
                               {isSwitching ? (
                                 <>
@@ -777,10 +777,10 @@ export default function BillingPage() {
                               onClick={() => handleSwitchTier(slug, { forceCheckout: true })}
                               disabled={isSwitching}
                               className="w-full text-center text-[10px] text-muted-foreground hover:text-primary transition-colors flex items-center justify-center gap-1 py-0.5"
-                              title="Test the hosted Lemon Squeezy checkout flow"
+                              title="Test the hosted checkout flow"
                             >
                               <ExternalLink size={10} />
-                              <span>Test Lemon Squeezy Checkout</span>
+                              <span>Test Checkout Flow</span>
                             </button>
                           </div>
                         ) : appliedPromo && appliedPromo.planSlug === slug ? (
@@ -805,7 +805,7 @@ export default function BillingPage() {
                             )}
                           </button>
                         ) : (
-                          /* Public Visitor Mode: Real Lemon Squeezy Checkout Only */
+                          /* Standard Visitor / User Mode: Real Checkout Only */
                           <button
                             type="button"
                             onClick={() => handleSwitchTier(slug)}
@@ -822,7 +822,7 @@ export default function BillingPage() {
                             {isSwitching ? (
                               <>
                                 <RefreshCw size={13} className="animate-spin" />
-                                <span>Opening Lemon Squeezy…</span>
+                                <span>Opening Checkout…</span>
                               </>
                             ) : (
                               <>
@@ -1461,9 +1461,9 @@ export default function BillingPage() {
                     <div className="flex items-center gap-2 text-xs text-purple-300">
                       <Sparkles size={13} className="text-purple-400" />
                       <span>
-                        {canUseTestMode
-                          ? 'Test in 1 click using developer sandbox:'
-                          : 'Unlock immediately via Lemon Squeezy checkout:'}
+                        {isAdmin
+                          ? 'Test in 1 click using admin sandbox:'
+                          : 'Unlock immediately via secure checkout:'}
                       </span>
                     </div>
                     <button
@@ -1474,7 +1474,7 @@ export default function BillingPage() {
                     >
                       <Building2 size={13} />
                       <span>
-                        {canUseTestMode
+                        {isAdmin
                           ? 'Unlock REST API Console — Switch to Advanced ($20/mo)'
                           : 'Upgrade to Advanced ($20/mo)'}
                       </span>
@@ -1618,8 +1618,10 @@ export default function BillingPage() {
                   <CreditCard size={18} className="text-muted-foreground/30 mx-auto mb-2" />
                   <p className="text-xs text-muted-foreground">
                     {plan && plan.priceMonthlyUsd === 0
-                      ? 'No payment history — you are testing on the Free tier.'
-                      : 'Testing sandbox active — no credit card charged.'}
+                      ? 'No payment history — you are on the Free tier.'
+                      : isAdmin
+                      ? 'Admin test sandbox active — no credit card charged.'
+                      : 'No invoices found for this billing cycle.'}
                   </p>
                 </div>
               )}

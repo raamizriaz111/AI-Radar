@@ -32,12 +32,19 @@ export const dynamic = 'force-dynamic';
  * In development with no secret configured, allows local calls.
  */
 function isAuthorized(request: NextRequest): boolean {
-  const secret = process.env.COLLECTION_SECRET;
+  const secret = process.env.COLLECTION_SECRET || process.env.CRON_SECRET;
   const isDev = process.env.NODE_ENV === 'development';
 
   if (secret) {
     const providedSecret = request.headers.get('x-collection-secret');
+    const authHeader = request.headers.get('authorization');
     if (providedSecret === secret) return true;
+    if (authHeader === `Bearer ${secret}`) return true;
+  }
+
+  // Allow requests dispatched by Vercel Cron
+  if (request.headers.get('user-agent')?.includes('vercel-cron')) {
+    return true;
   }
 
   if (isDev) return true;
@@ -142,6 +149,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 export async function GET(request: NextRequest): Promise<NextResponse> {
   if (!isAuthorized(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { searchParams } = new URL(request.url);
+  const isCronRun =
+    searchParams.get('run') === 'true' ||
+    searchParams.get('cron') === 'true' ||
+    Boolean(request.headers.get('user-agent')?.includes('vercel-cron'));
+
+  if (isCronRun) {
+    return POST(request);
   }
 
   const { listCollectors } = await import('@/lib/collectors/registry');

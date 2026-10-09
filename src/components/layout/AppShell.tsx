@@ -6,7 +6,7 @@
 // Selectively wraps internal authenticated dashboard routes with the
 // executive Sidebar and Mobile Navigation bar, while providing a clean,
 // focused, distraction-free full-screen environment for auth and public pages
-// (/login, /signup, /terms, /privacy, /welcome).
+// (/login, /signup, /terms, /privacy).
 // =============================================================================
 
 import React from 'react';
@@ -14,7 +14,7 @@ import { usePathname } from 'next/navigation';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { MobileNav } from '@/components/layout/MobileNav';
 
-const STANDALONE_ROUTES = ['/login', '/signup', '/terms', '/privacy', '/welcome'];
+const STANDALONE_ROUTES = ['/login', '/signup', '/terms', '/privacy'];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

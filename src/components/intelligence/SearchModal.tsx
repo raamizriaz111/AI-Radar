@@ -71,7 +71,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-background/80 p-4 pt-16 backdrop-blur-sm sm:pt-24">
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 p-4 pt-16 backdrop-blur-md sm:pt-24">
       <div className="w-full max-w-2xl rounded-xl border border-border bg-card shadow-2xl overflow-hidden">
         {/* Search Input Bar */}
         <div className="flex items-center border-b border-border px-4 py-3">

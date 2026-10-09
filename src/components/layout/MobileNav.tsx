@@ -177,7 +177,7 @@ export function MobileNav() {
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 top-14 z-40 bg-background/80 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 top-14 z-40 bg-black/60 backdrop-blur-md lg:hidden"
             onClick={() => setOpen(false)}
             aria-hidden="true"
           />

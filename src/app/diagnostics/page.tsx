@@ -25,6 +25,7 @@ import { getGlobalUsageMetrics } from '@/lib/services/usageService';
 import { getAllPlans } from '@/lib/billing/planConfig';
 import { getBillingAdminSummary } from '@/lib/billing/subscriptionService';
 import { getCurrentUser } from '@/lib/auth/session';
+import { isAdminAuthenticated } from '@/lib/auth/adminAuth';
 
 export const metadata: Metadata = {
   title: 'Diagnostics',
@@ -34,7 +35,8 @@ export const dynamic = 'force-dynamic';
 
 export default async function DiagnosticsPage() {
   const user = await getCurrentUser();
-  const isAdmin = user?.role === 'admin';
+  const isPasskeyAdmin = await isAdminAuthenticated();
+  const isAdmin = user?.role === 'admin' || isPasskeyAdmin;
 
   if (!isAdmin) {
     redirect('/');

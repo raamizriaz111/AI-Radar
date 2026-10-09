@@ -3,6 +3,7 @@
 // =============================================================================
 import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth/session';
+import { isAdminAuthenticated } from '@/lib/auth/adminAuth';
 import { getSubscription, changePlan } from '@/lib/billing/subscriptionService';
 import { getCurrentUsagePeriod } from '@/lib/billing/usageEnforcement';
 import { getUserInvoices } from '@/lib/billing/invoiceService';
@@ -25,8 +26,9 @@ export async function GET() {
 
     const plan = getPlanConfig(subscription.planSlug);
     const isDev = process.env.NODE_ENV !== 'production';
-    const isAdmin = user?.role === 'admin';
-    const canUseTestMode = isDev || isAdmin;
+    const isPasskeyAdmin = await isAdminAuthenticated();
+    const isAdmin = user?.role === 'admin' || isPasskeyAdmin;
+    const canUseTestMode = isAdmin;
 
     return NextResponse.json({
       subscription,
@@ -64,8 +66,9 @@ export async function POST(req: NextRequest) {
     }
 
     const isDev = process.env.NODE_ENV !== 'production';
-    const isAdmin = user?.role === 'admin';
-    const canUseTestMode = isDev || isAdmin;
+    const isPasskeyAdmin = await isAdminAuthenticated();
+    const isAdmin = user?.role === 'admin' || isPasskeyAdmin;
+    const canUseTestMode = isAdmin;
 
     // Validate promo code if provided
     let validatedPromo = null;
@@ -80,7 +83,7 @@ export async function POST(req: NextRequest) {
       validatedPromo = couponResult.coupon;
     }
 
-    // In production, public visitors / non-admin accounts cannot switch to paid tiers without Lemon Squeezy checkout OR a valid promo code.
+    // Public visitors / non-admin accounts cannot switch to paid tiers without Lemon Squeezy checkout OR a valid promo code.
     if (planSlug !== 'free' && !canUseTestMode && !validatedPromo) {
       return NextResponse.json(
         {
